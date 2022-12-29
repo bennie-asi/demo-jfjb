@@ -1,0 +1,18 @@
+name:
+  托尼·史塔克    # 字符串引号可以不加 【这里的缩进使用的是tab键，所以如果直接复制粘贴，在运行下方脚本时会报错，记得改成空格】
+invention:
+  - Iron Man Armor
+  - Arc reactor
+  - Ultron
+teammate:
+  - Steven Rogers
+  - Thor Odinson
+  - Natasha Romanoff
+  - Bruce Banner
+  - Clint Barton
+apprentice:
+  彼得·帕克
+wife:
+  佩珀·波兹
+father:
+  霍华德·史塔克
