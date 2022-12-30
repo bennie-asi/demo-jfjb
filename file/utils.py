@@ -64,9 +64,19 @@ class MyFileUtil:
             return res
 
     @staticmethod
-    def writeDocx(path, date, title, content):
+    def writeDocx(path, title, content, date=''):
         from docx import Document
-        wordfile = Document(path)
+        import datetime
+        if not os.path.exists(path):
+            print('文件不存在~')
+            return
+        if not date:
+            # 默认当日日期
+            date = str(datetime.date.today())
+        wordfile = Document()
+        title1 = wordfile.add_heading(date,level=1)
+        title2 = wordfile.add_heading(title,level=2)
+
         pass
 
 
