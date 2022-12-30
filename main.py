@@ -27,7 +27,7 @@ def getNewsURL(tempUrl, navURL):
     return res
 
 
-def getNewsContent(newsUrl):
+def getNews(newsUrl):
     '''传入新闻url，返回新闻标题与内容'''
     soup = request(newsUrl)
     res = {'title': '', 'content': ''}
@@ -39,24 +39,33 @@ def getNewsContent(newsUrl):
     return res
 
 
-if __name__ == '__main__':
-    myFile = MyFileUtil()
-    baseUrl = myFile.readYaml('config.yaml', 'config.baseURL')
-    savePath = myFile.readYaml('config.yaml', 'config.savePath')
-
+def getSumUrl(baseURL):
+    '''传入基础url获取所有的url'''
+    res = dict()
     formate = '%Y-%m/%d'
     fDate = formatDate(todayDate, formate)
-
     # 生成当日所有版面URL
-    sumURL = dict()
     for i in range(2, 14):
         after_url = 'node_%d.htm' % i
         nav_url = jointURL(baseUrl, fDate, after_url)
         # 存入对应版面的稿件URL
         newsUrls = getNewsURL(jointURL(baseUrl, fDate), nav_url)
-        sumURL[nav_url] = list(newsUrls)
+        res[nav_url] = list(newsUrls)
+    return res
+
+
+if __name__ == '__main__':
+    myFile = MyFileUtil()
+    baseUrl = myFile.readYaml('config.yaml', 'config.baseURL')
+    savePath = myFile.readYaml('config.yaml', 'config.savePath')
 
     suffix = myFile.readYaml('config.yaml', 'config.suffix')
     filename = str(todayDate) + suffix
-    path = myFile.newFile(filename, savePath)
+    path = myFile.getPath(filename, savePath)
     print(path)
+
+    sumUrl = getSumUrl(baseUrl)
+    for key, value in sumUrl.items():
+        for newsUrl in value:
+            news = getNews(newsUrl)
+            myFile.writeDocx(path, title=news['title'], content=news['content'], date=todayDate)

@@ -3,9 +3,10 @@ import os.path
 
 
 class MyFileUtil:
+    __writeCount = 0
 
-    def __int__(self):
-        pass
+    def __int__(self, writeCount):
+        self.__writeCount = writeCount
 
     def readYaml(self, path, fields=''):
         import yaml
@@ -25,7 +26,7 @@ class MyFileUtil:
         return res
 
     @staticmethod
-    def newFile(filename, path=''):
+    def getPath(filename, path=''):
         import os
         filename = os.path.normpath(filename)
         filename_path = os.path.dirname(filename)
@@ -44,6 +45,10 @@ class MyFileUtil:
         if not filename_name:
             raise RuntimeError('没有文件名')
         fullpath = os.path.join(abspath, filename_name)
+        return fullpath
+
+    def newFile(self, filename, path=''):
+        fullpath = self.getPath(filename, path)
         # if os.path.exists(fullpath):
         #     # raise RuntimeError('该路径中已存在该文件')
         #     return
@@ -63,21 +68,27 @@ class MyFileUtil:
             res = 0
             return res
 
-    @staticmethod
-    def writeDocx(path, title, content, date=''):
+    def writeDocx(self, path, title, content, date=''):
         from docx import Document
         import datetime
-        if not os.path.exists(path):
-            print('文件不存在~')
-            return
+        if os.path.exists(path):
+            wordfile = Document(path)
+        else:
+            wordfile = Document()
         if not date:
             # 默认当日日期
-            date = str(datetime.date.today())
-        wordfile = Document()
-        title1 = wordfile.add_heading(date,level=1)
-        title2 = wordfile.add_heading(title,level=2)
+            date = datetime.date.today()
 
-        pass
+        # title1 = wordfile.add_heading(str(date), level=1)
+        title2 = wordfile.add_heading(str(date) + title, level=2)
+        paragraph = wordfile.add_paragraph(content)
+        end_content = ''
+        wordfile.add_paragraph(end_content)
+
+        self.__writeCount += 1
+        print('导入%s第%d篇新闻' % (date, self.__writeCount))
+
+        wordfile.save(path)
 
 
 if __name__ == '__main__':

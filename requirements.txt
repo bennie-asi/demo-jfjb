@@ -3,4 +3,3 @@ requests~=2.6.0
 BeautifulSoup4~=4.11.1
 pyyaml
 lxml
-docx
