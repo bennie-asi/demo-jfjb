@@ -1,3 +1,4 @@
 config:
   baseURL: "http://www.81.cn/jfjbmap/content/"
   savePath: './target/'
+  suffix: '.docx'

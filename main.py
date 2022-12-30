@@ -27,6 +27,18 @@ def getNewsURL(tempUrl, navURL):
     return res
 
 
+def getNewsContent(newsUrl):
+    '''传入新闻url，返回新闻标题与内容'''
+    soup = request(newsUrl)
+    res = {'title': '', 'content': ''}
+    if soup:
+        title = soup.find(id='APP-Title').string
+        content = soup.find('founder-content').get_text()
+        res['title'] = title
+        res['content'] = content
+    return res
+
+
 if __name__ == '__main__':
     myFile = MyFileUtil()
     baseUrl = myFile.readYaml('config.yaml', 'config.baseURL')
@@ -34,7 +46,6 @@ if __name__ == '__main__':
 
     formate = '%Y-%m/%d'
     fDate = formatDate(todayDate, formate)
-    # print(fDate)
 
     # 生成当日所有版面URL
     sumURL = dict()
@@ -42,9 +53,10 @@ if __name__ == '__main__':
         after_url = 'node_%d.htm' % i
         nav_url = jointURL(baseUrl, fDate, after_url)
         # 存入对应版面的稿件URL
-        sumURL[nav_url] = list(getNewsURL(jointURL(baseUrl, fDate), nav_url))
-    print(sumURL)
+        newsUrls = getNewsURL(jointURL(baseUrl, fDate), nav_url)
+        sumURL[nav_url] = list(newsUrls)
 
-    absPath = myFile.newFile(savePath)
-    if absPath:
-        myFile.writeFile(absPath, '6啊')
+    suffix = myFile.readYaml('config.yaml', 'config.suffix')
+    filename = str(todayDate) + suffix
+    path = myFile.newFile(filename, savePath)
+    print(path)

@@ -63,6 +63,12 @@ class MyFileUtil:
             res = 0
             return res
 
+    @staticmethod
+    def writeDocx(path, date, title, content):
+        from docx import Document
+        wordfile = Document(path)
+        pass
+
 
 if __name__ == '__main__':
     myFile = MyFileUtil()
