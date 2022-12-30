@@ -6,8 +6,6 @@ from network.request import request
 
 todayDate = datetime.date.today()
 yesterdayDate = (todayDate + datetime.timedelta(days=-1))
-startDate = datetime.date(2022, 12, 1)
-endDate = yesterdayDate
 
 
 def formatDate(date: datetime, formate='%Y-%m-%d'):
@@ -54,7 +52,7 @@ def getSumUrl(baseURL):
     return res
 
 
-def saveDocx(start: datetime, end=''):
+def saveDocx(path, baseUrl, start, end=None):
     diff = (start - todayDate)
     if diff.days > 0:
         print('开始日期不能大于当日日期')
@@ -66,13 +64,19 @@ def saveDocx(start: datetime, end=''):
             print('结束日期不能大于当日日期')
             end = todayDate
             # return
+    else:
+        end = start
     diff1 = start - end
     if diff1.days > 0:
         print('开始日期不能大于结束日期')
         return
     detal = datetime.timedelta(days=1)
+    sumUrl = getSumUrl(baseUrl)
     while start <= end:
-
+        for key, value in sumUrl.items():
+            for newsUrl in value:
+                news = getNews(newsUrl)
+                myFile.writeDocx(path, title=news['title'], content=news['content'], date=start)
         start += detal
 
 
@@ -81,7 +85,7 @@ def userInput():
     print(separator * 45)
     print(separator * 5 + '输入开始日期(必填）与截止日期(可选)例如：' + separator * 5)
     dateOperator = myFile.readYaml('config.yaml', 'config.dateOperator')
-    print(separator * 12 + '2022-12-01' + dateOperator + '2022-12-01' + separator * 12)
+    print(separator * 12 + '2022-12-29' + dateOperator + '2022-12-30' + separator * 12)
     date = input('输入：').split(dateOperator)
     print(separator * 45)
     return date
@@ -89,20 +93,25 @@ def userInput():
 
 if __name__ == '__main__':
     myFile = MyFileUtil()
+
     baseUrl = myFile.readYaml('config.yaml', 'config.baseURL')
     savePath = myFile.readYaml('config.yaml', 'config.savePath')
-
     suffix = myFile.readYaml('config.yaml', 'config.suffix')
-    filename = str(startDate) + suffix
+    formate = myFile.readYaml('config.yaml', 'config.dateFormat')
+
+    # startDate = todayDate
+    endDate = todayDate
+
+    date = userInput()
+
+    filename = '~'.join(date) + suffix
     path = myFile.getPath(filename, savePath)
     print("文档所在路径：%s" % path)
 
-    # saveDocx(startDate)
-
-    userInput()
-
-    # sumUrl = getSumUrl(baseUrl)
-    # for key, value in sumUrl.items():
-    #     for newsUrl in value:
-    #         news = getNews(newsUrl)
-    #         myFile.writeDocx(path, title=news['title'], content=news['content'], date=startDate)
+    startDate = datetime.datetime.strptime(date[0], formate).date()
+    date_len = len(date)
+    if date_len == 1:
+        saveDocx(path=path, baseUrl=baseUrl, start=startDate)
+    if date_len == 2:
+        endDate = datetime.datetime.strptime(date[1], formate).date()
+        saveDocx(path=path, baseUrl=baseUrl, start=startDate, end=endDate)
