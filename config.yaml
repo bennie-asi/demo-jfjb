@@ -2,3 +2,5 @@ config:
   baseURL: "http://www.81.cn/jfjbmap/content/"
   savePath: './target/'
   suffix: '.docx'
+#  dateOperator不可设置为-
+  dateOperator: '~'

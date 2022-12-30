@@ -27,6 +27,7 @@ class MyFileUtil:
 
     @staticmethod
     def getPath(filename, path=''):
+        '''获取最终文件路径'''
         import os
         filename = os.path.normpath(filename)
         filename_path = os.path.dirname(filename)

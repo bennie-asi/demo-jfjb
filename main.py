@@ -6,7 +6,7 @@ from network.request import request
 
 todayDate = datetime.date.today()
 yesterdayDate = (todayDate + datetime.timedelta(days=-1))
-startDate = todayDate
+startDate = datetime.date(2022, 12, 1)
 endDate = yesterdayDate
 
 
@@ -54,18 +54,55 @@ def getSumUrl(baseURL):
     return res
 
 
+def saveDocx(start: datetime, end=''):
+    diff = (start - todayDate)
+    if diff.days > 0:
+        print('开始日期不能大于当日日期')
+        start = todayDate
+        # return
+    if end:
+        diff = (end - todayDate)
+        if diff.days > 0:
+            print('结束日期不能大于当日日期')
+            end = todayDate
+            # return
+    diff1 = start - end
+    if diff1.days > 0:
+        print('开始日期不能大于结束日期')
+        return
+    detal = datetime.timedelta(days=1)
+    while start <= end:
+
+        start += detal
+
+
+def userInput():
+    separator = '='
+    print(separator * 45)
+    print(separator * 5 + '输入开始日期(必填）与截止日期(可选)例如：' + separator * 5)
+    dateOperator = myFile.readYaml('config.yaml', 'config.dateOperator')
+    print(separator * 12 + '2022-12-01' + dateOperator + '2022-12-01' + separator * 12)
+    date = input('输入：').split(dateOperator)
+    print(separator * 45)
+    return date
+
+
 if __name__ == '__main__':
     myFile = MyFileUtil()
     baseUrl = myFile.readYaml('config.yaml', 'config.baseURL')
     savePath = myFile.readYaml('config.yaml', 'config.savePath')
 
     suffix = myFile.readYaml('config.yaml', 'config.suffix')
-    filename = str(todayDate) + suffix
+    filename = str(startDate) + suffix
     path = myFile.getPath(filename, savePath)
-    print(path)
+    print("文档所在路径：%s" % path)
 
-    sumUrl = getSumUrl(baseUrl)
-    for key, value in sumUrl.items():
-        for newsUrl in value:
-            news = getNews(newsUrl)
-            myFile.writeDocx(path, title=news['title'], content=news['content'], date=todayDate)
+    # saveDocx(startDate)
+
+    userInput()
+
+    # sumUrl = getSumUrl(baseUrl)
+    # for key, value in sumUrl.items():
+    #     for newsUrl in value:
+    #         news = getNews(newsUrl)
+    #         myFile.writeDocx(path, title=news['title'], content=news['content'], date=startDate)
