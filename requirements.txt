@@ -2,3 +2,4 @@ python_docx
 requests
 BeautifulSoup4
 pyyaml
+lxml
