@@ -1,5 +1,5 @@
 # -*- coding:UTF-8 -*-
-import datetime
+import datetime,time
 from file.utils import MyFileUtil
 from network.utils import jointURL
 from network.request import request
@@ -43,16 +43,30 @@ def getSumUrl(baseURL):
     formate = '%Y-%m/%d'
     fDate = formatDate(todayDate, formate)
     # 生成当日所有版面URL
-    for i in range(2, 14):
-        after_url = 'node_%d.htm' % i
+    # for i in range(2, 14):
+    #     after_url = 'node_%d.htm' % i
+    #     nav_url = jointURL(baseUrl, fDate, after_url)
+    #     # 存入对应版面的稿件URL
+    #     newsUrls = getNewsURL(jointURL(baseUrl, fDate), nav_url)
+    #     res[nav_url] = list(newsUrls)
+
+    # 版面URL通过node_2来获取
+    after_url = 'node_2.htm'
+    nav_url_2 = jointURL(baseURL, fDate, after_url)
+
+    soup = request(nav_url_2)
+    a_tags = soup.find(id='section-list-xs').find_all('a')
+    for a in a_tags:
+        after_url = a.get('href')
         nav_url = jointURL(baseUrl, fDate, after_url)
-        # 存入对应版面的稿件URL
         newsUrls = getNewsURL(jointURL(baseUrl, fDate), nav_url)
         res[nav_url] = list(newsUrls)
+    # print('getSumURl', res)
     return res
 
 
 def saveDocx(path, baseUrl, start, end=None):
+    myFile = MyFileUtil()
     diff = (start - todayDate)
     if diff.days > 0:
         print('开始日期不能大于当日日期')
@@ -81,12 +95,22 @@ def saveDocx(path, baseUrl, start, end=None):
 
 
 def userInput():
+    from inputimeout import inputimeout, TimeoutOccurred
+    myFile = MyFileUtil()
     separator = '='
     print(separator * 45)
     print(separator * 5 + '输入开始日期(必填）与截止日期(可选)例如：' + separator * 5)
     dateOperator = myFile.readYaml('config.yaml', 'config.dateOperator')
+    timeout = myFile.readYaml('config.yaml', 'config.timeout')
     print(separator * 12 + '2022-12-29' + dateOperator + '2022-12-30' + separator * 12)
-    date = input('输入：').split(dateOperator)
+    date = list()
+    try:
+        print(separator * 5 + '你有%d秒钟的时间来输入，超时自动输入今日日期' % timeout + separator * 5)
+        date.append(inputimeout(prompt='>>', timeout=timeout))
+    except TimeoutOccurred:
+        print('超时自动输入~')
+        date.append(str(todayDate))
+    # date = input('输入：').split(dateOperator)
     print(separator * 45)
     return date
 
@@ -103,12 +127,15 @@ if __name__ == '__main__':
     endDate = todayDate
 
     date = userInput()
-
+    # print(date)
     filename = '~'.join(date) + suffix
     path = myFile.getPath(filename, savePath)
     print("文档所在路径：%s" % path)
-
-    startDate = datetime.datetime.strptime(date[0], formate).date()
+    try:
+        startDate = datetime.datetime.strptime(date[0], formate).date()
+    except:
+        print('输入的数据格式不正确,5秒后程序将退出')
+        time.sleep(5)
     date_len = len(date)
     if date_len == 1:
         saveDocx(path=path, baseUrl=baseUrl, start=startDate)

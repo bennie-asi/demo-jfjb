@@ -5,3 +5,4 @@ config:
 #  dateOperator不可设置为'-'
   dateOperator: '~'
   dateFormat: '%Y-%m-%d'
+  timeout: 10
