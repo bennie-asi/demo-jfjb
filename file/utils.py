@@ -69,7 +69,7 @@ class MyFileUtil:
             res = 0
             return res
 
-    def writeDocx(self, path, title, content, date=''):
+    def writeDocx(self, path, content, title='', date=''):
         from docx import Document
         import datetime
         if os.path.exists(path):
@@ -81,7 +81,7 @@ class MyFileUtil:
             date = datetime.date.today()
 
         # title1 = wordfile.add_heading(str(date), level=1)
-        title2 = wordfile.add_heading(str(date) + title, level=2)
+        title2 = wordfile.add_heading(str(date) + str(title), level=2)
         paragraph = wordfile.add_paragraph(content)
         end_content = ''
         wordfile.add_paragraph(end_content)

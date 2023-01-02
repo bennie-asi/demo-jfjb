@@ -30,7 +30,7 @@ def getNews(newsUrl):
     soup = request(newsUrl)
     res = {'title': '', 'content': ''}
     if soup:
-        title = soup.find(id='APP-Title').string
+        title = soup.find(id='APP-Title').get_text()
         content = soup.find('founder-content').get_text()
         res['title'] = title
         res['content'] = content
@@ -90,6 +90,7 @@ def saveDocx(path, baseUrl, start, end=None):
         for key, value in sumUrl.items():
             for newsUrl in value:
                 news = getNews(newsUrl)
+                # print(news['title'])
                 myFile.writeDocx(path, title=news['title'], content=news['content'], date=start)
         start += detal
 
