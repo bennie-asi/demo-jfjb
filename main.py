@@ -143,3 +143,5 @@ if __name__ == '__main__':
     if date_len == 2:
         endDate = datetime.datetime.strptime(date[1], formate).date()
         saveDocx(path=path, baseUrl=baseUrl, start=startDate, end=endDate)
+    print('程序执行完成，3秒后程序将退出')
+    time.sleep(3)
