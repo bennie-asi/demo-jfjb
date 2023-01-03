@@ -107,7 +107,7 @@ def userInput():
     date = list()
     try:
         print(str('你有%d秒钟的时间来输入，超时自动输入今日日期' % timeout).center(50, separator))
-        date.extend(inputimeout(prompt='>>', timeout=timeout).split(dateOperator))
+        date.extend(inputimeout(prompt='>>', timeout=timeout).strip().split(dateOperator))
     except TimeoutOccurred:
         print('超时自动输入~')
         date.append(str(todayDate))
@@ -134,15 +134,16 @@ if __name__ == '__main__':
     path = myFile.getPath(filename, savePath)
     print("文档所在路径：%s" % path)
     try:
-        startDate = datetime.datetime.strptime(data[0], formate).date()
-    except:
+        startDate = datetime.datetime.strptime(data[0].strip(), formate).date()
+    except Exception as e:
+        print(e)
         print('输入的数据格式不正确,5秒后程序将退出')
         time.sleep(5)
     date_len = len(data)
     if date_len == 1:
         saveDocx(path=path, baseUrl=baseUrl, start=startDate)
     if date_len == 2:
-        endDate = datetime.datetime.strptime(data[1], formate).date()
+        endDate = datetime.datetime.strptime(data[1].strip(), formate).date()
         saveDocx(path=path, baseUrl=baseUrl, start=startDate, end=endDate)
     print('程序执行完成，3秒后程序将退出')
     time.sleep(3)
