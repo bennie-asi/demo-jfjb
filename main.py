@@ -1,5 +1,5 @@
 # -*- coding:UTF-8 -*-
-import datetime,time
+import datetime, time
 from file.utils import MyFileUtil
 from network.utils import jointURL
 from network.request import request
@@ -66,7 +66,6 @@ def getSumUrl(baseURL):
 
 
 def saveDocx(path, baseUrl, start, end=None):
-
     diff = (start - todayDate)
     if diff.days > 0:
         print('开始日期不能大于当日日期')
@@ -100,21 +99,21 @@ def userInput():
     from inputimeout import inputimeout, TimeoutOccurred
     myFile = MyFileUtil()
     separator = '='
-    print(''.center(45,separator))
-    print(separator * 5 + '输入开始日期(必填）与截止日期(可选)例如：' + separator * 5)
+    print(''.center(50, separator))
+    print('输入开始日期(必填）与截止日期(可选)例如：'.center(50, separator))
     dateOperator = myFile.readYaml('config.yaml', 'config.dateOperator')
     timeout = myFile.readYaml('config.yaml', 'config.timeout')
-    print(separator * 12 + '2022-12-29' + dateOperator + '2022-12-30' + separator * 12)
+    print(str('2022-12-29' + dateOperator + '2022-12-30').center(50, separator))
     date = list()
     try:
-        print(separator * 5 + '你有%d秒钟的时间来输入，超时自动输入今日日期' % timeout + separator * 5)
+        print(str('你有%d秒钟的时间来输入，超时自动输入今日日期' % timeout).center(50, separator))
         date.extend(inputimeout(prompt='>>', timeout=timeout).split(dateOperator))
     except TimeoutOccurred:
         print('超时自动输入~')
         date.append(str(todayDate))
         # date.extend('2022-12-29~2022-12-30'.split(dateOperator))
     # date = input('输入：').split(dateOperator)
-    print(separator * 45)
+    print(''.center(50, separator))
     return date
 
 
