@@ -66,7 +66,7 @@ def getSumUrl(baseURL):
 
 
 def saveDocx(path, baseUrl, start, end=None):
-    myFile = MyFileUtil()
+
     diff = (start - todayDate)
     if diff.days > 0:
         print('开始日期不能大于当日日期')
@@ -87,6 +87,7 @@ def saveDocx(path, baseUrl, start, end=None):
     detal = datetime.timedelta(days=1)
     sumUrl = getSumUrl(baseUrl)
     while start <= end:
+        myFile = MyFileUtil()
         for key, value in sumUrl.items():
             for newsUrl in value:
                 news = getNews(newsUrl)
@@ -99,7 +100,7 @@ def userInput():
     from inputimeout import inputimeout, TimeoutOccurred
     myFile = MyFileUtil()
     separator = '='
-    print(separator * 45)
+    print(''.center(45,separator))
     print(separator * 5 + '输入开始日期(必填）与截止日期(可选)例如：' + separator * 5)
     dateOperator = myFile.readYaml('config.yaml', 'config.dateOperator')
     timeout = myFile.readYaml('config.yaml', 'config.timeout')
@@ -107,10 +108,11 @@ def userInput():
     date = list()
     try:
         print(separator * 5 + '你有%d秒钟的时间来输入，超时自动输入今日日期' % timeout + separator * 5)
-        date.append(inputimeout(prompt='>>', timeout=timeout))
+        date.extend(inputimeout(prompt='>>', timeout=timeout).split(dateOperator))
     except TimeoutOccurred:
         print('超时自动输入~')
         date.append(str(todayDate))
+        # date.extend('2022-12-29~2022-12-30'.split(dateOperator))
     # date = input('输入：').split(dateOperator)
     print(separator * 45)
     return date
@@ -127,21 +129,22 @@ if __name__ == '__main__':
     # startDate = todayDate
     endDate = todayDate
 
-    date = userInput()
+    data = userInput()
     # print(date)
-    filename = '~'.join(date) + suffix
+    filename = '~'.join(data) + suffix
     path = myFile.getPath(filename, savePath)
     print("文档所在路径：%s" % path)
     try:
-        startDate = datetime.datetime.strptime(date[0], formate).date()
+        startDate = datetime.datetime.strptime(data[0], formate).date()
     except:
         print('输入的数据格式不正确,5秒后程序将退出')
+        print(data[0])
         time.sleep(5)
-    date_len = len(date)
+    date_len = len(data)
     if date_len == 1:
         saveDocx(path=path, baseUrl=baseUrl, start=startDate)
     if date_len == 2:
-        endDate = datetime.datetime.strptime(date[1], formate).date()
+        endDate = datetime.datetime.strptime(data[1], formate).date()
         saveDocx(path=path, baseUrl=baseUrl, start=startDate, end=endDate)
     print('程序执行完成，3秒后程序将退出')
     time.sleep(3)

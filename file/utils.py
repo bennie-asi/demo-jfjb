@@ -80,7 +80,6 @@ class MyFileUtil:
             # 默认当日日期
             date = datetime.date.today()
 
-        # title1 = wordfile.add_heading(str(date), level=1)
         title2 = wordfile.add_heading(str(date) + str(title), level=2)
         paragraph = wordfile.add_paragraph(content)
         end_content = ''
