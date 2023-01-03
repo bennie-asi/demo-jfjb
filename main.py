@@ -137,7 +137,6 @@ if __name__ == '__main__':
         startDate = datetime.datetime.strptime(data[0], formate).date()
     except:
         print('输入的数据格式不正确,5秒后程序将退出')
-        print(data[0])
         time.sleep(5)
     date_len = len(data)
     if date_len == 1:
